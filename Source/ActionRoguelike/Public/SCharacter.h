@@ -19,15 +19,33 @@ public:
 	ASCharacter();
 
 protected:
+	FTimerHandle Timerhandle_PrimaryAttack;
+
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArmComp;
 
 	UPROPERTY(VisibleAnywhere)
 	UCameraComponent* CameraComp;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Attack")
+	TSubclassOf<AActor> MagicProjectile;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Attack")
+	UAnimMontage* AttackAnim;
+
+	UPROPERTY(VisibleAnywhere, Category = "Attack")
+	FName MuzzleName;
+
+protected:
 	void MoveForward(float Value);
 
 	void MoveRight(float Value);
+
+	void SpwanProjectile(TSubclassOf<AActor> ProjectileClass);
+
+	void PrimaryAttack();
+
+	void PrimaryAttack_Elapsed();
 
 public:	
 

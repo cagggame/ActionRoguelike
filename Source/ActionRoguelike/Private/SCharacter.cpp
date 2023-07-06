@@ -20,9 +20,9 @@ ASCharacter::ASCharacter()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
 	bUseControllerRotationYaw = false;
+
+	MuzzleName = "Muzzle_01";
 }
-
-
 
 void ASCharacter::MoveForward(float Value)
 {
@@ -41,7 +41,32 @@ void ASCharacter::MoveRight(float Value)
 
 	FVector RightVector = FRotationMatrix(ControlRotation).GetScaledAxis(EAxis::Y);
 
-	AddMovementInput(GetActorRightVector(), Value);
+	AddMovementInput(RightVector, Value);
+}
+
+void ASCharacter::SpwanProjectile(TSubclassOf<AActor> ProjectileClass)
+{
+	FVector SpawnLocation = GetMesh()->GetSocketLocation(MuzzleName);
+
+	FRotator SpawnRotation = GetControlRotation();
+
+	FActorSpawnParameters SpawnParameters;
+	// Make sure the projectile will not collide player's hand
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParameters);
+}
+
+void ASCharacter::PrimaryAttack()
+{
+	PlayAnimMontage(AttackAnim);
+
+	GetWorldTimerManager().SetTimer(Timerhandle_PrimaryAttack, this, &ASCharacter::PrimaryAttack_Elapsed, 0.2f);
+}
+
+void ASCharacter::PrimaryAttack_Elapsed()
+{
+	SpwanProjectile(MagicProjectile);
 }
 
 // Called to bind functionality to input
@@ -53,5 +78,8 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+
+	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &ASCharacter::PrimaryAttack);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 }
 
