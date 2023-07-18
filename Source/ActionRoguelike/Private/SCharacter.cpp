@@ -56,6 +56,7 @@ void ASCharacter::SpwanProjectile(TSubclassOf<AActor> ProjectileClass)
 	FActorSpawnParameters SpawnParameters;
 	// Make sure the projectile will not collide player's hand
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	SpawnParameters.Instigator = this;
 
 	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParameters);
 }
