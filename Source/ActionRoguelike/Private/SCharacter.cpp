@@ -7,6 +7,7 @@
 #include "Components/InputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "SInteractionComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 ASCharacter::ASCharacter()
@@ -51,7 +52,31 @@ void ASCharacter::SpwanProjectile(TSubclassOf<AActor> ProjectileClass)
 {
 	FVector SpawnLocation = GetMesh()->GetSocketLocation(MuzzleName);
 
-	FRotator SpawnRotation = GetControlRotation();
+	// Find hit location through line trace, then recalculate SpawnRotation by subtraction of SpawnLocation and hit location
+	FHitResult Hit;
+
+	FVector CameraLocation = CameraComp->GetComponentLocation();
+	FVector TraceEnd = CameraLocation + (GetControlRotation().Vector() * 5000.0f);
+
+	FCollisionObjectQueryParams ObjectQueryParams;
+	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
+	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
+	ObjectQueryParams.AddObjectTypesToQuery(ECC_Pawn);
+
+	FCollisionShape Shape;
+	Shape.SetSphere(20.0f);
+
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+
+	bool bIsHit = GetWorld()->SweepSingleByObjectType(Hit, CameraLocation, TraceEnd, FQuat::Identity, ObjectQueryParams, Shape, Params);
+
+	FVector HitLocation = TraceEnd;
+	if (bIsHit) {
+		HitLocation = Hit.ImpactPoint;
+	}
+
+	FRotator SpawnRotation = FRotationMatrix::MakeFromX(HitLocation - SpawnLocation).Rotator();
 
 	FActorSpawnParameters SpawnParameters;
 	// Make sure the projectile will not collide player's hand
