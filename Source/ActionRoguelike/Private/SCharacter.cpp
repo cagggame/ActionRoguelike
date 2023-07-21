@@ -90,12 +90,24 @@ void ASCharacter::PrimaryAttack()
 {
 	PlayAnimMontage(AttackAnim);
 
-	GetWorldTimerManager().SetTimer(Timerhandle_PrimaryAttack, this, &ASCharacter::PrimaryAttack_Elapsed, 0.2f);
+	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ASCharacter::PrimaryAttack_Elapsed, 0.2f);
 }
 
 void ASCharacter::PrimaryAttack_Elapsed()
 {
-	SpwanProjectile(MagicProjectile);
+	SpwanProjectile(MagicProjectileClass);
+}
+
+void ASCharacter::DashProjectile()
+{
+	PlayAnimMontage(AttackAnim);
+
+	GetWorldTimerManager().SetTimer(TimerHandle_DashProjectile, this, &ASCharacter::DashProjectile_Elapsed, 0.2f);
+}
+
+void ASCharacter::DashProjectile_Elapsed()
+{
+	SpwanProjectile(DashProjectileClass);
 }
 
 void ASCharacter::PrimaryInteract()
@@ -114,6 +126,8 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 
 	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &ASCharacter::PrimaryAttack);
+	PlayerInputComponent->BindAction("DashProjectile", IE_Pressed, this, &ASCharacter::DashProjectile);
+
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("PrimaryInteract", IE_Pressed, this, &ASCharacter::PrimaryInteract);
 }

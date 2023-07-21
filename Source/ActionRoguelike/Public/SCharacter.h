@@ -20,7 +20,8 @@ public:
 	ASCharacter();
 
 protected:
-	FTimerHandle Timerhandle_PrimaryAttack;
+	FTimerHandle TimerHandle_PrimaryAttack;
+	FTimerHandle TimerHandle_DashProjectile;
 
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArmComp;
@@ -32,7 +33,10 @@ protected:
 	USInteractionComponent* InteractionComp;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Attack")
-	TSubclassOf<AActor> MagicProjectile;
+	TSubclassOf<AActor> MagicProjectileClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Attack")
+	TSubclassOf<AActor> DashProjectileClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Attack")
 	UAnimMontage* AttackAnim;
@@ -50,6 +54,10 @@ protected:
 	void PrimaryAttack();
 
 	void PrimaryAttack_Elapsed();
+
+	void DashProjectile();
+
+	void DashProjectile_Elapsed();
 
 	void PrimaryInteract();
 
