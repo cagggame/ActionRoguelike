@@ -98,6 +98,18 @@ void ASCharacter::PrimaryAttack_Elapsed()
 	SpwanProjectile(MagicProjectileClass);
 }
 
+void ASCharacter::BlackHoleProjectile()
+{
+	PlayAnimMontage(AttackAnim);
+
+	GetWorldTimerManager().SetTimer(TimerHandle_BlackHoleProjectile, this, &ASCharacter::BlackHoleProjectile_Elapsed, 0.2f);
+}
+
+void ASCharacter::BlackHoleProjectile_Elapsed()
+{
+	SpwanProjectile(BlackHoleProjectileClass);
+}
+
 void ASCharacter::DashProjectile()
 {
 	PlayAnimMontage(AttackAnim);
@@ -126,6 +138,7 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 
 	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &ASCharacter::PrimaryAttack);
+	PlayerInputComponent->BindAction("BlackHoleProjectile", IE_Pressed, this, &ASCharacter::BlackHoleProjectile);
 	PlayerInputComponent->BindAction("DashProjectile", IE_Pressed, this, &ASCharacter::DashProjectile);
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);

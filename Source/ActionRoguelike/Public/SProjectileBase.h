@@ -9,6 +9,7 @@
 class USphereComponent;
 class UParticleSystemComponent;
 class UProjectileMovementComponent;
+class UParticleSystem;
 
 UCLASS()
 class ACTIONROGUELIKE_API ASProjectileBase : public AActor
@@ -28,5 +29,14 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 	UProjectileMovementComponent* MovementComp;
+
+	UPROPERTY(EditAnywhere, Category = "Effect")
+	UParticleSystem* ImpactVFX;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void Explode();
+
+	UFUNCTION()
+	void OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 };

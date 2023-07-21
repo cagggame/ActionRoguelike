@@ -21,6 +21,7 @@ public:
 
 protected:
 	FTimerHandle TimerHandle_PrimaryAttack;
+	FTimerHandle TimerHandle_BlackHoleProjectile;
 	FTimerHandle TimerHandle_DashProjectile;
 
 	UPROPERTY(VisibleAnywhere)
@@ -34,6 +35,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Attack")
 	TSubclassOf<AActor> MagicProjectileClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Attack")
+	TSubclassOf<AActor> BlackHoleProjectileClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Attack")
 	TSubclassOf<AActor> DashProjectileClass;
@@ -54,6 +58,10 @@ protected:
 	void PrimaryAttack();
 
 	void PrimaryAttack_Elapsed();
+
+	void BlackHoleProjectile();
+
+	void BlackHoleProjectile_Elapsed();
 
 	void DashProjectile();
 
