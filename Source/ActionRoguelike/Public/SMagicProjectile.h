@@ -21,12 +21,9 @@ public:
 	ASMagicProjectile();
 
 protected:
-	/*UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	USphereComponent* SphereComp;
+	UPROPERTY(EditAnywhere)
+	float Damage;
 
-	UPROPERTY(VisibleAnywhere)
-	UParticleSystemComponent* ParticleComp;
-
-	UPROPERTY(VisibleAnywhere)
-	UProjectileMovementComponent* MovementComp;*/
+	UFUNCTION()
+	void OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 };

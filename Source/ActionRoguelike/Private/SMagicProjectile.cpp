@@ -5,22 +5,25 @@
 #include "Components/SphereComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "SAttributeComponent.h"
 
 // Sets default values
 ASMagicProjectile::ASMagicProjectile()
 {
-	/*SphereComp = CreateDefaultSubobject<USphereComponent>("SphereComp");
-	RootComponent = SphereComp;
-	SphereComp->SetCollisionProfileName("Projectile");
+	Damage = -20.0f;
 
-	ParticleComp = CreateDefaultSubobject<UParticleSystemComponent>("ParticaleComp");
-	ParticleComp->SetupAttachment(SphereComp);
+	SphereComp->OnComponentBeginOverlap.AddDynamic(this, &ASMagicProjectile::OnActorOverlap);
+}
 
-	MovementComp = CreateDefaultSubobject<UProjectileMovementComponent>("MovementComp");
-	MovementComp->InitialSpeed = 2000.0f;
-	MovementComp->bRotationFollowsVelocity = true;
-	MovementComp->bInitialVelocityInLocalSpace = true;*/
+void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor && OtherActor != GetInstigator()) {
+		USAttributeComponent* AttributeComp = Cast<USAttributeComponent>(OtherActor->GetComponentByClass(USAttributeComponent::StaticClass()));
+		if (AttributeComp) {
+			AttributeComp->ApplyHealthChange(Damage);
 
-	MovementComp->InitialSpeed = 2000.0f;
+			Destroy();
+		}
+	}
 }
 

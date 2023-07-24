@@ -9,6 +9,7 @@
 class USpringArmComponent;
 class UCameraComponent;
 class USInteractionComponent;
+class USAttributeComponent;
 
 UCLASS()
 class ACTIONROGUELIKE_API ASCharacter : public ACharacter
@@ -20,10 +21,6 @@ public:
 	ASCharacter();
 
 protected:
-	FTimerHandle TimerHandle_PrimaryAttack;
-	FTimerHandle TimerHandle_BlackHoleProjectile;
-	FTimerHandle TimerHandle_DashProjectile;
-
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArmComp;
 
@@ -32,6 +29,14 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 	USInteractionComponent* InteractionComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	USAttributeComponent* AttributeComp;
+
+protected:
+	FTimerHandle TimerHandle_PrimaryAttack;
+	FTimerHandle TimerHandle_BlackHoleProjectile;
+	FTimerHandle TimerHandle_DashProjectile;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Attack")
 	TSubclassOf<AActor> MagicProjectileClass;
