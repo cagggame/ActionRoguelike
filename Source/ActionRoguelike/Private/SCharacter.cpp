@@ -31,6 +31,13 @@ ASCharacter::ASCharacter()
 	MuzzleName = "Muzzle_01";
 }
 
+void ASCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	AttributeComp->OnHealthChanged.AddDynamic(this, &ASCharacter::OnHealthChanged);
+}
+
 void ASCharacter::MoveForward(float Value)
 {
 	FRotator ControlRotation = GetControlRotation();
@@ -130,6 +137,15 @@ void ASCharacter::DashProjectile_Elapsed()
 void ASCharacter::PrimaryInteract()
 {
 	InteractionComp->PrimaryInteract();
+}
+
+void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta)
+{
+	if (NewHealth <= 0.0f && Delta < 0.0f) {
+		
+		APlayerController* PC = Cast<APlayerController>(GetController());
+		DisableInput(PC);
+	}
 }
 
 // Called to bind functionality to input
