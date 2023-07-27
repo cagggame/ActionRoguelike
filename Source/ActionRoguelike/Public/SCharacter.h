@@ -53,6 +53,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Attack")
 	FName MuzzleName;
 
+	UPROPERTY(EditAnywhere, Category = "Hited")
+	float FlashSpeed;
+
 protected:
 	void MoveForward(float Value);
 
