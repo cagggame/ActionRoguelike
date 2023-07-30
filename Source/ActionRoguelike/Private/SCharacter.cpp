@@ -9,6 +9,7 @@
 #include "SInteractionComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "SAttributeComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ASCharacter::ASCharacter()
@@ -28,7 +29,7 @@ ASCharacter::ASCharacter()
 
 	bUseControllerRotationYaw = false;
 
-	MuzzleName = "Muzzle_01";
+	HandSocketName = "Muzzle_01";
 
 	FlashSpeed = 1.0f;
 }
@@ -63,7 +64,7 @@ void ASCharacter::MoveRight(float Value)
 void ASCharacter::SpwanProjectile(TSubclassOf<AActor> ProjectileClass)
 {
 	if (ensure(ProjectileClass)) {
-		FVector SpawnLocation = GetMesh()->GetSocketLocation(MuzzleName);
+		FVector SpawnLocation = GetMesh()->GetSocketLocation(HandSocketName);
 
 		// Find hit location through line trace, then recalculate SpawnRotation by subtraction of SpawnLocation and hit location
 		FHitResult Hit;
@@ -96,6 +97,8 @@ void ASCharacter::SpwanProjectile(TSubclassOf<AActor> ProjectileClass)
 		SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 		SpawnParameters.Instigator = this;
 
+		UGameplayStatics::SpawnEmitterAttached(CastingSpellEffect, GetMesh(), HandSocketName, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::SnapToTarget);
+
 		GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParameters);
 	}
 }
@@ -103,6 +106,8 @@ void ASCharacter::SpwanProjectile(TSubclassOf<AActor> ProjectileClass)
 void ASCharacter::PrimaryAttack()
 {
 	PlayAnimMontage(AttackAnim);
+
+	// UGameplayStatics::SpawnEmitterAttached(CastingSpellEffect, GetMesh(), HandSocketName, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::SnapToTarget);
 
 	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ASCharacter::PrimaryAttack_Elapsed, 0.2f);
 }

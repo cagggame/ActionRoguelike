@@ -28,6 +28,7 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 			AttributeComp->ApplyHealthChange(Damage);
 
 			UGameplayStatics::PlaySoundAtLocation(GetWorld(), ImpactSound, GetActorLocation());
+			UGameplayStatics::PlayWorldCameraShake(GetWorld(), Shake, GetActorLocation(), 0, 5000.0f);
 
 			Destroy();
 		}
@@ -41,6 +42,7 @@ void ASMagicProjectile::Explode_Implementation()
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactVFX, GetActorLocation(), GetActorRotation(), true);
 
 		UGameplayStatics::PlaySoundAtLocation(GetWorld(), ImpactSound, GetActorLocation());
+		UGameplayStatics::PlayWorldCameraShake(GetWorld(), Shake, GetActorLocation(), 0, 5000.0f);
 
 		Destroy();
 	}

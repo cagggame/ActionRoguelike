@@ -51,10 +51,13 @@ protected:
 	UAnimMontage* AttackAnim;
 
 	UPROPERTY(VisibleAnywhere, Category = "Attack")
-	FName MuzzleName;
+	FName HandSocketName;
 
 	UPROPERTY(EditAnywhere, Category = "Hited")
 	float FlashSpeed;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Effect")
+	UParticleSystem* CastingSpellEffect;
 
 protected:
 	void MoveForward(float Value);
