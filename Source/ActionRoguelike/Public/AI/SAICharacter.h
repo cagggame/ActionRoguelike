@@ -25,6 +25,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	USAttributeComponent* AttributeComp;
 
+	UPROPERTY(VisibleAnywhere, Category = "Effect")
+	FName TimeToHitParmName;
+
 	virtual void PostInitializeComponents() override;
 
 	void SetTargetActor(AActor* NewTarget);
