@@ -30,7 +30,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Audio")
 	USoundBase* ImpactSound;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Damage")
 	float Damage;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Camera")
