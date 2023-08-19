@@ -5,6 +5,8 @@
 #include "SGameplayInterface.h"
 #include "DrawDebugHelpers.h"
 
+static TAutoConsoleVariable<bool> CVarDebugDrawInteraction(TEXT("su.InteractionDebugDraw"), 1.0f, TEXT("Enable debug line for interaction component"), ECVF_Cheat);
+
 // Sets default values for this component's properties
 USInteractionComponent::USInteractionComponent()
 {
@@ -28,6 +30,8 @@ void USInteractionComponent::BeginPlay()
 
 void USInteractionComponent::PrimaryInteract()
 {
+	bool bDebugDraw = CVarDebugDrawInteraction.GetValueOnGameThread();
+
 	TArray<FHitResult> Hits;
 
 	AActor* MyOwner = GetOwner();
@@ -47,7 +51,9 @@ void USInteractionComponent::PrimaryInteract()
 	bool bIsHit = GetWorld()->SweepMultiByObjectType(Hits, EyeLocation, TraceEnd, FQuat::Identity, ObjectQueryParams, Shape);
 
 	FColor DebugColor = bIsHit ? FColor::Green : FColor::Red;
-	DrawDebugLine(GetWorld(), EyeLocation, TraceEnd, DebugColor, false, 2.0f, 0, 2.0f);
+	if (bDebugDraw) {
+		DrawDebugLine(GetWorld(), EyeLocation, TraceEnd, DebugColor, false, 2.0f, 0, 2.0f);
+	}
 
 	for (FHitResult Hit : Hits) {
 		AActor* HitActor = Hit.GetActor();
@@ -55,7 +61,9 @@ void USInteractionComponent::PrimaryInteract()
 
 			if (HitActor->Implements<USGameplayInterface>()) {
 
-				DrawDebugSphere(GetWorld(), Hit.ImpactPoint, 30.0f, 16, DebugColor, false, 2.0f);
+				if (bDebugDraw) {
+					DrawDebugSphere(GetWorld(), Hit.ImpactPoint, 30.0f, 16, DebugColor, false, 2.0f);
+				}
 
 				APawn* MyPawn = Cast<APawn>(MyOwner);
 				ISGameplayInterface::Execute_Interact(HitActor, MyPawn);

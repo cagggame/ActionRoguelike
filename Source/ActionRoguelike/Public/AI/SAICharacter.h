@@ -8,6 +8,7 @@
 
 class UPawnSensingComponent;
 class USAttributeComponent;
+class USWorldUserWidget;
 
 UCLASS()
 class ACTIONROGUELIKE_API ASAICharacter : public ACharacter
@@ -28,6 +29,11 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Effect")
 	FName TimeToHitParmName;
 
+	USWorldUserWidget* ActivateHealthBar;
+
+	UPROPERTY(EditAnywhere, Category = "UI")
+	TSubclassOf<UUserWidget> HealthBarWidgetClass;
+
 	virtual void PostInitializeComponents() override;
 
 	void SetTargetActor(AActor* NewTarget);
@@ -37,4 +43,5 @@ protected:
 
 	UFUNCTION()
 	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);
+
 };

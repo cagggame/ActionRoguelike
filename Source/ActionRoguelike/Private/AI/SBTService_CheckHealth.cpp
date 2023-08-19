@@ -6,6 +6,11 @@
 #include "SAttributeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
+USBTService_CheckHealth::USBTService_CheckHealth()
+{
+	LowHealthFraction = 0.3f;
+}
+
 void USBTService_CheckHealth::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
@@ -22,7 +27,7 @@ void USBTService_CheckHealth::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 				USAttributeComponent* AttributeComp = Cast<USAttributeComponent>(MyPawn->GetComponentByClass(USAttributeComponent::StaticClass()));
 				if (AttributeComp) {
 
-					bool bIsAiLowHealth = AttributeComp->IsLowHealth();
+					bool bIsAiLowHealth = (AttributeComp->GetHealth() / AttributeComp->GetHealthMax()) < LowHealthFraction;
 					BBComp->SetValueAsBool("IsLowHealth", bIsAiLowHealth);
 				}
 			}
