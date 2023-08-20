@@ -2,21 +2,36 @@
 
 
 #include "SPowerup_HealthPotion.h"
-#include <SAttributeComponent.h>
+#include "SAttributeComponent.h"
+#include "SPlayerState.h"
 
 ASPowerup_HealthPotion::ASPowerup_HealthPotion()
 {
 	Heal = 20.0f;
+
+	CreditsCost = -1;
 }
 
 void ASPowerup_HealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 {
 	if (InstigatorPawn) {
-		USAttributeComponent* AttributeComp = Cast<USAttributeComponent>(InstigatorPawn->GetComponentByClass(USAttributeComponent::StaticClass()));
-		if (AttributeComp && !AttributeComp->IsFullHealth()) {
-			AttributeComp->ApplyHealthChange(this, 20.0f);
 
-			Inactivate();
+		ASPlayerState* PS = Cast<ASPlayerState>(InstigatorPawn->GetPlayerState());
+		if (PS) {
+			
+			int32 Credits = PS->GetCredits();
+			if (Credits < 1) {
+				return;
+			}
+
+			USAttributeComponent* AttributeComp = Cast<USAttributeComponent>(InstigatorPawn->GetComponentByClass(USAttributeComponent::StaticClass()));
+			if (AttributeComp && !AttributeComp->IsFullHealth()) {
+				AttributeComp->ApplyHealthChange(this, 20.0f);
+
+				PS->ApplyCreditsChanged(CreditsCost);
+
+				Inactivate();
+			}
 		}
 	}
 }

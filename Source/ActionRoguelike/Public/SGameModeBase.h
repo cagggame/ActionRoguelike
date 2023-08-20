@@ -34,6 +34,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	UCurveFloat* DifficultyCurve;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Credits")
+	int32 KillingBonus;
+
 	void SpawnBotsTimerElapsed();
 
 	UFUNCTION()
@@ -44,11 +47,13 @@ protected:
 
 	UFUNCTION()
 	void RespawnPlayerElapsed(AController* Controller);
-	
+
 public:
 	ASGameModeBase();
 
 	virtual void StartPlay() override;
 
 	virtual void OnActorKilled(AActor* VictimActor, AActor* Killer);
+
+	void OnMinionKilled(AActor* VictimActor, AActor* Killer);
 };

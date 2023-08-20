@@ -8,12 +8,15 @@
 #include "EngineUtils.h"
 #include "DrawDebugHelpers.h"
 #include "SCharacter.h"
+#include "SPlayerState.h"
 
 static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("su.SpawnBots"), true, TEXT("Enable spawning of bots via timer"), ECVF_Cheat);
 
 ASGameModeBase::ASGameModeBase()
 {
 	SpawnTimerInterval = 2.0f;
+
+	KillingBonus = 1;
 }
 
 void ASGameModeBase::StartPlay()
@@ -111,5 +114,19 @@ void ASGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
 		Delegate.BindUFunction(this, "RespawnPlayerElapsed", Player->GetController());
 
 		GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, Delegate, 2.0f, false);
+	}
+}
+
+void ASGameModeBase::OnMinionKilled(AActor* VictimActor, AActor* Killer)
+{
+	ASAICharacter* Minion = Cast<ASAICharacter>(VictimActor);
+	if (Minion) {
+
+		ASCharacter* Player = Cast<ASCharacter>(Killer);
+		if (Player) {
+
+			ASPlayerState* PS = Cast<ASPlayerState>(Player->GetPlayerState());
+			PS->ApplyCreditsChanged(KillingBonus);
+		}
 	}
 }

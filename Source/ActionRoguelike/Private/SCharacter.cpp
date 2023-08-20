@@ -10,6 +10,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "SAttributeComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "SPlayerState.h"
 
 // Sets default values
 ASCharacter::ASCharacter()

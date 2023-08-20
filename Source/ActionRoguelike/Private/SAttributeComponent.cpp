@@ -74,6 +74,7 @@ bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delt
 		if (GM) {
 
 			GM->OnActorKilled(GetOwner(), InstigatorActor);
+			GM->OnMinionKilled(GetOwner(), InstigatorActor);
 		}
 	}
 
