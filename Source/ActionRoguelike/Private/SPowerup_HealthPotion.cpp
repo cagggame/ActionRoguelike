@@ -9,7 +9,7 @@ ASPowerup_HealthPotion::ASPowerup_HealthPotion()
 {
 	Heal = 20.0f;
 
-	CreditsCost = -1;
+	CreditsCost = 50;
 }
 
 void ASPowerup_HealthPotion::Interact_Implementation(APawn* InstigatorPawn)
@@ -26,11 +26,10 @@ void ASPowerup_HealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 
 			USAttributeComponent* AttributeComp = Cast<USAttributeComponent>(InstigatorPawn->GetComponentByClass(USAttributeComponent::StaticClass()));
 			if (AttributeComp && !AttributeComp->IsFullHealth()) {
-				AttributeComp->ApplyHealthChange(this, 20.0f);
-
-				PS->ApplyCreditsChanged(CreditsCost);
-
-				Inactivate();
+				
+				if (PS->RemoveCredits(CreditsCost) && AttributeComp->ApplyHealthChange(this, Heal)) {
+					Inactivate();
+				}
 			}
 		}
 	}

@@ -10,8 +10,10 @@ static TAutoConsoleVariable<float> CVarDamageMultiplier(TEXT("su.DamageMultiplie
 USAttributeComponent::USAttributeComponent()
 {
 	Health = 100.0f;
-
 	HealthMax = 100.0f;
+
+	Rage = 50.0f;
+	RageMax = 100.0f;
 }
 
 USAttributeComponent* USAttributeComponent::GetAttribute(AActor* FromActor)
@@ -81,12 +83,51 @@ bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delt
 	return ActualDelta != 0;
 }
 
-float USAttributeComponent::GetHealth()
+float USAttributeComponent::GetHealth() const
 {
 	return Health;
 }
 
-float USAttributeComponent::GetHealthMax()
+float USAttributeComponent::GetHealthMax() const
 {
 	return HealthMax;
+}
+
+bool USAttributeComponent::AddRage(AActor* InstigatorActor, float Delta)
+{
+	if (Delta > 0) {
+
+		Rage = FMath::Clamp(Rage + Delta, 0.0f, RageMax);
+		OnRageChanged.Broadcast(InstigatorActor, this, Rage, Delta);
+
+		return true;
+	}
+
+	return false;
+}
+
+bool USAttributeComponent::RemoveRage(AActor* InstigatorActor, float Delta)
+{
+	if (!ensure(Delta > 0)) {
+		return false;
+	}
+
+	if (Rage < Delta) {
+		return false;
+	}
+
+	Rage = FMath::Clamp(Rage - Delta, 0.0f, RageMax);
+	OnRageChanged.Broadcast(InstigatorActor, this, Rage, -Delta);
+
+	return true;
+}
+
+float USAttributeComponent::GetRage() const
+{
+	return Rage;
+}
+
+float USAttributeComponent::GetRageMax() const
+{
+	return RageMax;
 }

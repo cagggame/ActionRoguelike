@@ -6,7 +6,7 @@
 
 ASPowerup_Credits::ASPowerup_Credits()
 {
-	CreditsBonus = 1;
+	CreditsBonus = 80;
 }
 
 void ASPowerup_Credits::Interact_Implementation(APawn* InstigatorPawn)
@@ -16,7 +16,7 @@ void ASPowerup_Credits::Interact_Implementation(APawn* InstigatorPawn)
 		ASPlayerState* PS = Cast<ASPlayerState>(InstigatorPawn->GetPlayerState());
 		if (PS) {
 
-			PS->ApplyCreditsChanged(CreditsBonus);
+			PS->AddCredits(CreditsBonus);
 
 			Inactivate();
 		}

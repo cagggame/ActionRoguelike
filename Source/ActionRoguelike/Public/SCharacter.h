@@ -10,6 +10,7 @@ class USpringArmComponent;
 class UCameraComponent;
 class USInteractionComponent;
 class USAttributeComponent;
+class USActionComponent;
 
 UCLASS()
 class ACTIONROGUELIKE_API ASCharacter : public ACharacter
@@ -21,62 +22,44 @@ public:
 	ASCharacter();
 
 protected:
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Components")
 	USpringArmComponent* SpringArmComp;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UCameraComponent* CameraComp;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Components")
 	USInteractionComponent* InteractionComp;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USAttributeComponent* AttributeComp;
 
-protected:
-	FTimerHandle TimerHandle_PrimaryAttack;
-	FTimerHandle TimerHandle_BlackHoleProjectile;
-	FTimerHandle TimerHandle_DashProjectile;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Attack")
-	TSubclassOf<AActor> MagicProjectileClass;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Attack")
-	TSubclassOf<AActor> BlackHoleProjectileClass;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Attack")
-	TSubclassOf<AActor> DashProjectileClass;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Attack")
-	UAnimMontage* AttackAnim;
-
-	UPROPERTY(VisibleAnywhere, Category = "Attack")
-	FName HandSocketName;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	USActionComponent* ActionComp;
 
 	UPROPERTY(EditAnywhere, Category = "Hited")
 	float FlashSpeed;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Effect")
-	UParticleSystem* CastingSpellEffect;
+	UPROPERTY(EditAnywhere, Category = "Attributes")
+	float RageToAdd;
+
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	float RageCost_BlackHole;
 
 protected:
 	void MoveForward(float Value);
 
 	void MoveRight(float Value);
 
-	void SpwanProjectile(TSubclassOf<AActor> ProjectileClass);
+	void SprintStart();
+
+	void SprintStop();
 
 	void PrimaryAttack();
 
-	void PrimaryAttack_Elapsed();
-
 	void BlackHoleProjectile();
 
-	void BlackHoleProjectile_Elapsed();
-
 	void DashProjectile();
-
-	void DashProjectile_Elapsed();
 
 	void PrimaryInteract();
 

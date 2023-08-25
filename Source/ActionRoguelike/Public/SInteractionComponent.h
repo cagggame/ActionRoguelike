@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "SInteractionComponent.generated.h"
 
+class AActor;
+class USWorldUserWidget;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ACTIONROGUELIKE_API USInteractionComponent : public UActorComponent
@@ -17,17 +19,28 @@ public:
 	USInteractionComponent();
 
 protected:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
+	AActor* FocusActor;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<USWorldUserWidget> DefaultWidgetClass;
+
+	USWorldUserWidget* DefaultWidgetInstance;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Trace")
 	float TraceDistance;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly, Category = "Trace")
 	float TraceRadius;
 
-	// Called when the game starts
+	UPROPERTY(EditDefaultsOnly, Category = "Trace")
+	TEnumAsByte<ECollisionChannel> CollisionChannel;
+
 	virtual void BeginPlay() override;
 
+	void FindBestInteractable();
+
 public:	
-	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	void PrimaryInteract();

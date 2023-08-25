@@ -5,16 +5,35 @@
 
 ASPlayerState::ASPlayerState()
 {
-	Credits = 1;
+	Credits = 0;
 }
 
-void ASPlayerState::ApplyCreditsChanged(float Delta)
+void ASPlayerState::AddCredits(float Deltas)
 {
-	Credits += Delta;
-
-	if (Credits <= 0) {
-		Credits = 0;
+	if (!ensure(Deltas > 0)) {
+		return;
 	}
+
+	Credits += Deltas;
+
+	OnCreditsChanged.Broadcast(this, Credits, Deltas);
+}
+
+bool ASPlayerState::RemoveCredits(float Deltas)
+{
+	if (!ensure(Deltas >= 0)) {
+		return false;
+	}
+
+	if (Credits < Deltas) {
+		return false;
+	}
+
+	Credits -= Deltas;
+
+	OnCreditsChanged.Broadcast(this, Credits, -Deltas);
+
+	return true;
 }
 
 int32 ASPlayerState::GetCredits()

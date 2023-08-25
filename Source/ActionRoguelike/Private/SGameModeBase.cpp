@@ -16,7 +16,7 @@ ASGameModeBase::ASGameModeBase()
 {
 	SpawnTimerInterval = 2.0f;
 
-	KillingBonus = 1;
+	KillingBonus = 80;
 }
 
 void ASGameModeBase::StartPlay()
@@ -126,7 +126,7 @@ void ASGameModeBase::OnMinionKilled(AActor* VictimActor, AActor* Killer)
 		if (Player) {
 
 			ASPlayerState* PS = Cast<ASPlayerState>(Player->GetPlayerState());
-			PS->ApplyCreditsChanged(KillingBonus);
+			PS->AddCredits(KillingBonus);
 		}
 	}
 }
