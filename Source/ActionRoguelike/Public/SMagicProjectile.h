@@ -15,6 +15,7 @@ class UProjectileMovementComponent;
 class UAudioComponent;
 class UCameraShakeBase;
 class USActionEffect;
+class USActionEffect_Thorns;
 
 UCLASS()
 class ACTIONROGUELIKE_API ASMagicProjectile : public ASProjectileBase
@@ -38,7 +39,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Camera")
 	TSubclassOf<UCameraShakeBase> Shake;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Damage")
+	UPROPERTY(EditDefaultsOnly, Category = "Effect")
 	TSubclassOf<USActionEffect> BurningActionClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Tags")

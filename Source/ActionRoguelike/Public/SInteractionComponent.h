@@ -43,5 +43,8 @@ protected:
 public:	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	UFUNCTION(Server, Reliable)
+	void ServerInteract(AActor* InFocus);
+
 	void PrimaryInteract();
 };
