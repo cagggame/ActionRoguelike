@@ -3,31 +3,47 @@
 
 #include "SActionComponent.h"
 #include "SAction.h"
+#include "../ActionRoguelike.h"
+#include "Engine/ActorChannel.h"
+#include "Net/UnrealNetwork.h"
 
 USActionComponent::USActionComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
+	SetIsReplicatedByDefault(true);
 }
 
 void USActionComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	for (TSubclassOf<USAction> ActionClass : DefaultActions) {
+	if (GetOwner()->HasAuthority()) {
+		for (TSubclassOf<USAction> ActionClass : DefaultActions) {
 
-		if (ActionClass) {
-			AddAction(GetOwner(), ActionClass);
+			if (ActionClass) {
+				AddAction(GetOwner(), ActionClass);
+			}
 		}
 	}
+	
 }
 
 void USActionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	FString DebugMsg = GetNameSafe(GetOwner()) + " : " + ActivateGameplayTags.ToStringSimple();
-	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, DebugMsg);
+	/*FString DebugMsg = GetNameSafe(GetOwner()) + " : " + ActivateGameplayTags.ToStringSimple();
+	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, DebugMsg);*/
+
+	for (USAction* Action : Actions) {
+
+		FColor TextColor = Action->IsRunning() ? FColor::Blue : FColor::White;
+
+		FString ActionMsg = FString::Printf(TEXT("[%s] Action: %s"), *GetNameSafe(GetOwner()), *GetNameSafe(Action));
+
+		LogOnScreen(this, ActionMsg, TextColor, 0.0f);
+	}
 }
 
 void USActionComponent::AddAction(AActor* Instigator, TSubclassOf<USAction> ActionClass)
@@ -36,8 +52,10 @@ void USActionComponent::AddAction(AActor* Instigator, TSubclassOf<USAction> Acti
 		return;
 	}
 
-	USAction* NewAction = NewObject<USAction>(this, ActionClass);
+	USAction* NewAction = NewObject<USAction>(GetOwner(), ActionClass);
 	if (ensure(NewAction)) {
+
+		NewAction->Initialize(this);
 
 		Actions.Add(NewAction);
 
@@ -70,6 +88,11 @@ bool USActionComponent::StartActionByName(AActor* Instigator, FName ActionName)
 				continue;
 			}
 
+			if (!GetOwner()->HasAuthority()) {
+
+				ServerStartAction(Instigator, ActionName);
+			}
+
 			Action->StartAction(Instigator);
 			return true;
 		}
@@ -95,3 +118,28 @@ bool USActionComponent::StopActionByName(AActor* Instigator, FName ActionName)
 	return false;
 }
 
+void USActionComponent::ServerStartAction_Implementation(AActor* Instigator, FName ActionName)
+{
+	StartActionByName(Instigator, ActionName);
+}
+
+bool USActionComponent::ReplicateSubobjects(class UActorChannel* Channel, class FOutBunch* Bunch, FReplicationFlags* RepFlags)
+{
+	bool WorteSomething = Super::ReplicateSubobjects(Channel, Bunch, RepFlags);
+	for (USAction* Action : Actions) {
+
+		if (Action) {
+
+			WorteSomething = Channel->ReplicateSubobject(Action, *Bunch, *RepFlags);
+		}
+	}
+
+	return WorteSomething;
+}
+
+void USActionComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(USActionComponent, Actions);
+}

@@ -38,12 +38,22 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "UI")
 	TSubclassOf<UUserWidget> HealthBarWidgetClass;
 
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<USWorldUserWidget> SpottedWidgetClass;
+
+	/*USWorldUserWidget* SpottedWidgetInstance;*/
+
 	virtual void PostInitializeComponents() override;
 
 	void SetTargetActor(AActor* NewTarget);
 
+	AActor* GetTargetActor() const;
+
 	UFUNCTION()
 	void OnPawnSeen(APawn* Pawn);
+
+	UFUNCTION(NetMulticast, Unreliable)
+	void MulticastPawnSeen();
 
 	UFUNCTION()
 	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);

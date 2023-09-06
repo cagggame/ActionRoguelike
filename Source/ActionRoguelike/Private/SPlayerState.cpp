@@ -2,13 +2,16 @@
 
 
 #include "SPlayerState.h"
+#include "Net/UnrealNetwork.h"
 
 ASPlayerState::ASPlayerState()
 {
-	Credits = 0;
+	Credits = 80;
+
+	SetReplicates(true);
 }
 
-void ASPlayerState::AddCredits(float Deltas)
+void ASPlayerState::AddCredits(int32 Deltas)
 {
 	if (!ensure(Deltas > 0)) {
 		return;
@@ -19,7 +22,7 @@ void ASPlayerState::AddCredits(float Deltas)
 	OnCreditsChanged.Broadcast(this, Credits, Deltas);
 }
 
-bool ASPlayerState::RemoveCredits(float Deltas)
+bool ASPlayerState::RemoveCredits(int32 Deltas)
 {
 	if (!ensure(Deltas >= 0)) {
 		return false;
@@ -36,7 +39,19 @@ bool ASPlayerState::RemoveCredits(float Deltas)
 	return true;
 }
 
-int32 ASPlayerState::GetCredits()
+int32 ASPlayerState::GetCredits() const
 {
 	return Credits;
+}
+
+void ASPlayerState::MulticastCredisChanged_Implementation(int32 NewCredits, int32 Deltas)
+{
+	OnCreditsChanged.Broadcast(this, Credits, Deltas);
+}
+
+void ASPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const 
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ASPlayerState, Credits);
 }

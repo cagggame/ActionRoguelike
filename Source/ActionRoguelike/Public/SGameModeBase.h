@@ -25,7 +25,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	TSubclassOf<AActor> MinionClass;
 
-	UPROPERTY(EditAnywhere, Category = "AI")
+	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	UEnvQuery* SpawnBotQuery;
 
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
@@ -37,10 +37,26 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Credits")
 	int32 KillingBonus;
 
+	/* All power-up classes used to spawn with EQS at match start */
+	UPROPERTY(EditDefaultsOnly, Category = "Powerups")
+	TArray<TSubclassOf<AActor>> PowerupClasses;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Powerups")
+	UEnvQuery* SpawnPowerupQuery;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Powerups")
+	int32 DesiredPowerupCount;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Powerups")
+	float RequiredPowerupDistance;
+
 	void SpawnBotsTimerElapsed();
 
 	UFUNCTION()
 	void OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
+
+	UFUNCTION()
+	void OnPowerupQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
 
 	UFUNCTION(Exec)
 	void KillAll();

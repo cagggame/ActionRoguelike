@@ -8,46 +8,43 @@
 
 USActionEffect_Thorns::USActionEffect_Thorns()
 {
-	ReflectedDamageRate = 0.1;
+	ReflectionFraction = 0.1;
 
-	bAutoStart = true;
+	Period = 0.0f;
+	Duration = 0.0f;
 }
 
 void USActionEffect_Thorns::StartAction_Implementation(AActor* Instigator)
 {
-	AActor* MyOwner = GetOwningActionComp()->GetOwner();
-	if (ensure(MyOwner)) {
+	Super::StartAction_Implementation(Instigator);
 
-		USAttributeComponent* AttributeComp = USAttributeComponent::GetAttribute(MyOwner);
-		if (ensure(AttributeComp)) {
+	USAttributeComponent* AttributeComp = USAttributeComponent::GetAttribute(GetOwningActionComp()->GetOwner());
+	if (ensure(AttributeComp)) {
 
-			AttributeComp->OnHealthChanged.AddDynamic(this, &USActionEffect_Thorns::OnHealthChanged);
-
-			StopAction_Implementation(Instigator);
-		}
+		AttributeComp->OnHealthChanged.AddDynamic(this, &USActionEffect_Thorns::OnHealthChanged);
 	}
 }
 
 void USActionEffect_Thorns::StopAction_Implementation(AActor* Instigator)
 {
-	AActor* MyOwner = GetOwningActionComp()->GetOwner();
-	if (ensure(MyOwner)) {
+	Super::StopAction_Implementation(Instigator);
 
-		USAttributeComponent* AttributeComp = USAttributeComponent::GetAttribute(MyOwner);
-		if (ensure(AttributeComp)) {
+	USAttributeComponent* AttributeComp = USAttributeComponent::GetAttribute(GetOwningActionComp()->GetOwner());
+	if (ensure(AttributeComp)) {
 
-			AttributeComp->OnHealthChanged.RemoveDynamic(this, &USActionEffect_Thorns::OnHealthChanged);
-		}
+		AttributeComp->OnHealthChanged.RemoveDynamic(this, &USActionEffect_Thorns::OnHealthChanged);
 	}
 }
 
 void USActionEffect_Thorns::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta)
 {
-	if (Delta < 0.0f) {
+	AActor* OwningActor = GetOwningActionComp()->GetOwner();
 
-		float Damage = FMath::RoundToInt(Delta * ReflectedDamageRate);
+	if (Delta < 0.0f && OwningActor != InstigatorActor) {
 
-		USGameplayFunctionLibrary::ApplyDamage(GetOwningActionComp()->GetOwner(), InstigatorActor, Damage);
+		int32 Damage = FMath::RoundToInt(Delta * ReflectionFraction);
+
+		USGameplayFunctionLibrary::ApplyDamage(OwningActor, InstigatorActor, Damage);
 
 		UE_LOG(LogTemp, Log, TEXT("Thorns damage: %f"), Damage);
 	}

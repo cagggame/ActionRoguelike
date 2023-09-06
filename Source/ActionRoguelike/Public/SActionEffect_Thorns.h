@@ -23,7 +23,7 @@ public:
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
-	float ReflectedDamageRate;
+	float ReflectionFraction;
 
 	UFUNCTION()
 	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);

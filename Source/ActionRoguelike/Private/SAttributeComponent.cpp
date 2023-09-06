@@ -3,6 +3,7 @@
 
 #include "SAttributeComponent.h"
 #include "SGameModeBase.h"
+#include "Net/UnrealNetwork.h"
 
 static TAutoConsoleVariable<float> CVarDamageMultiplier(TEXT("su.DamageMultiplier"), 1.0f, TEXT("Gloable damage modifier for attribute component"), ECVF_Cheat);
 
@@ -12,8 +13,10 @@ USAttributeComponent::USAttributeComponent()
 	Health = 100.0f;
 	HealthMax = 100.0f;
 
-	Rage = 50.0f;
+	Rage = 0.0f;
 	RageMax = 100.0f;
+
+	SetIsReplicatedByDefault(true);
 }
 
 USAttributeComponent* USAttributeComponent::GetAttribute(AActor* FromActor)
@@ -65,18 +68,28 @@ bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delt
 	}
 
 	float OldHealth = Health;
-	Health = FMath::Clamp(Health + Delta, 0.0f, HealthMax);
+	float NewHealth = FMath::Clamp(Health + Delta, 0.0f, HealthMax);
 
-	float ActualDelta = Health - OldHealth;
-	OnHealthChanged.Broadcast(InstigatorActor, this, Health, ActualDelta);
+	float ActualDelta = NewHealth - OldHealth;
 
-	if (ActualDelta < 0.0f && Health == 0.0f) {
+	// Server run
+	if (GetOwner()->HasAuthority()) {
 
-		ASGameModeBase* GM = Cast<ASGameModeBase>(GetWorld()->GetAuthGameMode());
-		if (GM) {
+		Health = NewHealth;
 
-			GM->OnActorKilled(GetOwner(), InstigatorActor);
-			GM->OnMinionKilled(GetOwner(), InstigatorActor);
+		if (ActualDelta != 0) {
+
+			MulticastHealthChanged(InstigatorActor, Health, Delta);
+		}
+
+		if (ActualDelta < 0.0f && Health == 0.0f) {
+
+			ASGameModeBase* GM = Cast<ASGameModeBase>(GetWorld()->GetAuthGameMode());
+			if (GM) {
+
+				GM->OnActorKilled(GetOwner(), InstigatorActor);
+				GM->OnMinionKilled(GetOwner(), InstigatorActor);
+			}
 		}
 	}
 
@@ -93,33 +106,24 @@ float USAttributeComponent::GetHealthMax() const
 	return HealthMax;
 }
 
-bool USAttributeComponent::AddRage(AActor* InstigatorActor, float Delta)
+bool USAttributeComponent::ApplyRageChanged(AActor* InstigatorActor, float Delta)
 {
-	if (Delta > 0) {
-
-		Rage = FMath::Clamp(Rage + Delta, 0.0f, RageMax);
-		OnRageChanged.Broadcast(InstigatorActor, this, Rage, Delta);
-
-		return true;
-	}
-
-	return false;
-}
-
-bool USAttributeComponent::RemoveRage(AActor* InstigatorActor, float Delta)
-{
-	if (!ensure(Delta > 0)) {
+	if (Delta < 0 && Rage < -Delta) {
 		return false;
 	}
 
-	if (Rage < Delta) {
-		return false;
+	float OldRage = Rage;
+	Rage = FMath::Clamp(Rage + Delta, 0.0f, RageMax);
+
+	float ActualDelta = Rage - OldRage;
+	OnRageChanged.Broadcast(InstigatorActor, this, Rage, ActualDelta);
+
+	if (ActualDelta != 0) {
+
+		MulticastRageChanged(InstigatorActor, Rage, ActualDelta);
 	}
 
-	Rage = FMath::Clamp(Rage - Delta, 0.0f, RageMax);
-	OnRageChanged.Broadcast(InstigatorActor, this, Rage, -Delta);
-
-	return true;
+	return ActualDelta != 0;
 }
 
 float USAttributeComponent::GetRage() const
@@ -130,4 +134,26 @@ float USAttributeComponent::GetRage() const
 float USAttributeComponent::GetRageMax() const
 {
 	return RageMax;
+}
+
+void USAttributeComponent::MulticastHealthChanged_Implementation(AActor* InstigatorActor, float NewHealth, float Delta)
+{
+	OnHealthChanged.Broadcast(InstigatorActor, this, NewHealth, Delta);
+}
+
+void USAttributeComponent::MulticastRageChanged_Implementation(AActor* InstigatorActor, float NewRage, float Delta)
+{
+	OnRageChanged.Broadcast(InstigatorActor, this, NewRage, Delta);
+}
+
+void USAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(USAttributeComponent, Health);
+	DOREPLIFETIME(USAttributeComponent, HealthMax);
+	//DOREPLIFETIME_CONDITION(USAttributeComponent, HealthMax, COND_InitialOnly);
+
+	DOREPLIFETIME(USAttributeComponent, Rage);
+	DOREPLIFETIME(USAttributeComponent, RageMax);
 }

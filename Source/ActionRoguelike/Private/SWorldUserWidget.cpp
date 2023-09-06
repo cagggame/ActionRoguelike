@@ -14,7 +14,6 @@ void USWorldUserWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 
 		RemoveFromParent();
 
-
 		return;
 	}
 	 

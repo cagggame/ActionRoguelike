@@ -49,10 +49,40 @@ void ASAICharacter::SetTargetActor(AActor* NewTarget)
 	}
 }
 
+AActor* ASAICharacter::GetTargetActor() const
+{
+	AAIController* AIC = Cast<AAIController>(GetController());
+	if (AIC) {
+
+		return Cast<AActor>(AIC->GetBlackboardComponent()->GetValueAsObject("TargetActor"));
+	}
+
+	return nullptr;
+}
+
 void ASAICharacter::OnPawnSeen(APawn* Pawn)
 {
-	SetTargetActor(Pawn);
-	DrawDebugString(GetWorld(), GetActorLocation(), "PLAYER SPOTTED", nullptr, FColor::White, 4.0f, true);
+	if (GetTargetActor() != Pawn) {
+
+		SetTargetActor(Pawn);
+
+		MulticastPawnSeen();
+	}
+
+	// DrawDebugString(GetWorld(), GetActorLocation(), "PLAYER SPOTTED", nullptr, FColor::White, 4.0f, true);
+}
+
+void ASAICharacter::MulticastPawnSeen_Implementation()
+{
+	if (ensure(SpottedWidgetClass)) {
+
+		USWorldUserWidget* SpottedWidgetInstance = CreateWidget<USWorldUserWidget>(GetWorld(), SpottedWidgetClass);
+		if (SpottedWidgetInstance) {
+
+			SpottedWidgetInstance->AttachedActor = this;
+			SpottedWidgetInstance->AddToViewport(60);
+		}
+	}
 }
 
 void ASAICharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta)

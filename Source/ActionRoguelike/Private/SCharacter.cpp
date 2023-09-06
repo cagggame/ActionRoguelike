@@ -93,7 +93,7 @@ void ASCharacter::PrimaryAttack()
 
 void ASCharacter::BlackHoleProjectile()
 {
-	if (AttributeComp->RemoveRage(this, RageCost_BlackHole)) {
+	if (AttributeComp->ApplyRageChanged(this, -RageCost_BlackHole)) {
 
 		ActionComp->StartActionByName(this, "BlackHole");
 	}
@@ -121,7 +121,7 @@ void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent*
 		GetMesh()->SetScalarParameterValueOnMaterials("TimeToHit", GetWorld()->TimeSeconds);
 		GetMesh()->SetScalarParameterValueOnMaterials("FlashSpeed", FlashSpeed); 
 
-		OwningComp->AddRage(this, RageToAdd);
+		OwningComp->ApplyRageChanged(this, RageToAdd);
 	}
 }
 
