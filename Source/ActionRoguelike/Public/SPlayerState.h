@@ -8,6 +8,8 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnCreditsChanged, ASPlayerState*, PlayerState, int32, NewCredits, int32, Deltas);
 
+class USSaveGame;
+
 /**
  * 
  */
@@ -17,11 +19,11 @@ class ACTIONROGUELIKE_API ASPlayerState : public APlayerState
 	GENERATED_BODY()
 	
 protected:
-	UPROPERTY(Replicated, EditDefaultsOnly, Category = "Credits")
+	UPROPERTY(EditDefaultsOnly, ReplicatedUsing="OnRep_CreditsChanged", Category = "Credits")
 	int32 Credits;
 
-	UFUNCTION(NetMulticast, Unreliable)
-	void MulticastCredisChanged(int32 NewCredits, int32 Deltas);
+	UFUNCTION()
+	void OnRep_CreditsChanged(int32 OldCredits);
 
 public:
 	ASPlayerState();
@@ -37,4 +39,10 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnCreditsChanged OnCreditsChanged;
+
+	UFUNCTION(BlueprintNativeEvent)
+	void SavePlayerState(USSaveGame* SaveObject);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void LoadPlayerState(USSaveGame* SaveObject);
 };

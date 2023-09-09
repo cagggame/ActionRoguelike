@@ -25,7 +25,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UStaticMeshComponent* LidMesh;
 
-	UPROPERTY(ReplicatedUsing="OnRep_LidOpened", BlueprintReadOnly)
+	UPROPERTY(ReplicatedUsing="OnRep_LidOpened", BlueprintReadOnly, SaveGame)
 	bool bLidOpened;
 
 	UFUNCTION()
@@ -36,4 +36,6 @@ public:
 	float TargetPitch;
 
 	virtual void Interact_Implementation(APawn* InstigatorPawn);
+
+	virtual void OnActorLoaded_Implementation();
 };
