@@ -21,7 +21,14 @@ ASPowerupActor::ASPowerupActor()
 
 void ASPowerupActor::Interact_Implementation(APawn* InstigatorPawn)
 {
-	// implementation in derived class
+	// Implementation in derived class
+}
+
+FText ASPowerupActor::GetInteractionText_Implementation(APawn* InstigatorPawn)
+{
+	// Implementation in derived class
+
+	return FText::GetEmpty();
 }
 
 void ASPowerupActor::Inactivate()

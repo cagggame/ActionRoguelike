@@ -31,6 +31,9 @@ class ACTIONROGUELIKE_API USAction : public UObject
 	GENERATED_BODY()
 
 protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	TSoftObjectPtr<UTexture2D> Icon;
+
 	UPROPERTY(Replicated)
 	USActionComponent* ActionComponent;
 
@@ -44,6 +47,9 @@ protected:
 	USActionComponent* GetOwningActionComp() const;
 	
 public:
+	UPROPERTY(Replicated)
+	float TimeStarted;
+
 	void Initialize(USActionComponent* NewActionComp);
 
 	UPROPERTY(EditDefaultsOnly, Category = "Actions")

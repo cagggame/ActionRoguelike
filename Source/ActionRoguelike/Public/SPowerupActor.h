@@ -28,7 +28,9 @@ protected:
 
 	float RespawnTime;
 	
-	virtual void Interact_Implementation(APawn* InstigatorPawn);
+	void Interact_Implementation(APawn* InstigatorPawn);
+
+	FText GetInteractionText_Implementation(APawn* InstigatorPawn);
 
 	void Inactivate();
 
