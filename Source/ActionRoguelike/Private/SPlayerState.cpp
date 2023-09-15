@@ -9,7 +9,7 @@ ASPlayerState::ASPlayerState()
 {
 	Credits = 80;
 
-	SetReplicates(true);
+	bReplicates = true;
 }
 
 void ASPlayerState::AddCredits(int32 Deltas)

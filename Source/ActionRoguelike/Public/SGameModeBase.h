@@ -28,7 +28,7 @@ public:
 	}
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	USMonsterData* MonsterData;
+	FPrimaryAssetId MonsterId;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float Weight;
@@ -86,6 +86,8 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Powerups")
 	float RequiredPowerupDistance;
+
+	void OnMonsterLoaded(FPrimaryAssetId LoadedId, FVector SpawnLocation);
 
 	void SpawnBotsTimerElapsed();
 

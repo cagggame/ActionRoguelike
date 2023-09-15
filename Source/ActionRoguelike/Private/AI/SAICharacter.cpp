@@ -26,7 +26,7 @@ ASAICharacter::ASAICharacter()
 
 	TimeToHitParmName = "TimeToHit";
 
-	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
+	//GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
 	GetMesh()->SetGenerateOverlapEvents(true);
 }
 
@@ -62,11 +62,18 @@ AActor* ASAICharacter::GetTargetActor() const
 
 void ASAICharacter::OnPawnSeen(APawn* Pawn)
 {
-	if (GetTargetActor() != Pawn) {
-
+	if (GetTargetActor() != Pawn) 
+	{
 		SetTargetActor(Pawn);
 
 		MulticastPawnSeen();
+	}
+	else
+	{
+		if (SpottedWidgetInstance != nullptr) 
+		{
+			SpottedWidgetInstance->RemoveFromParent();
+		}
 	}
 
 	// DrawDebugString(GetWorld(), GetActorLocation(), "PLAYER SPOTTED", nullptr, FColor::White, 4.0f, true);
@@ -74,11 +81,11 @@ void ASAICharacter::OnPawnSeen(APawn* Pawn)
 
 void ASAICharacter::MulticastPawnSeen_Implementation()
 {
-	if (ensure(SpottedWidgetClass)) {
-
-		USWorldUserWidget* SpottedWidgetInstance = CreateWidget<USWorldUserWidget>(GetWorld(), SpottedWidgetClass);
-		if (SpottedWidgetInstance) {
-
+	if (ensure(SpottedWidgetClass)) 
+	{
+		SpottedWidgetInstance = CreateWidget<USWorldUserWidget>(GetWorld(), SpottedWidgetClass);
+		if (SpottedWidgetInstance) 
+		{
 			SpottedWidgetInstance->AttachedActor = this;
 			SpottedWidgetInstance->AddToViewport(60);
 		}

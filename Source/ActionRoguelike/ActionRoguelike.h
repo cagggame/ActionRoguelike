@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 
+DECLARE_STATS_GROUP(TEXT("MY_Game"), STATGROUP_OWNSTAT, STATCAT_Advanced);
+
 static void LogOnScreen(UObject* WorldContext, FString Msg, FColor Color = FColor::White, float Duration = 5.0f) 
 {
 	if (!ensure(WorldContext)) {

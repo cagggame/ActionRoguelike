@@ -41,6 +41,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<USWorldUserWidget> SpottedWidgetClass;
 
+	USWorldUserWidget* SpottedWidgetInstance;
+
 	/*USWorldUserWidget* SpottedWidgetInstance;*/
 
 	virtual void PostInitializeComponents() override;
